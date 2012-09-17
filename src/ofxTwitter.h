@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <Poco/Thread.h>
-#include "ofxTwitterConnector.h"
+#include "ofxTwitterStreamConnector.h"
 #include "ofxTweet.h"
 using namespace std;
 
@@ -18,6 +18,6 @@ public:
 	bool hasNewTweets();
 	ofxTweet getNextTweet();	
 private:
-	ofxTwitterConnector connector;
+	ofxTwitterStreamConnector connector;
 	Poco::Thread thread;
 };
