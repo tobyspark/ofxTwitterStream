@@ -11,7 +11,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include <jansson.h>
+#include "jansson.h"
 #include "jansson_private.h"
 #include "strbuffer.h"
 #include "utf.h"
