@@ -25,4 +25,5 @@ private:
 	string password;
 	string server;
 	string filter;
+    void parseBuffer(vector<char> sBuffer);
 };

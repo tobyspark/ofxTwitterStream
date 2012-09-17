@@ -1,13 +1,16 @@
 #include "ofxTwitter.h"
-ofxTwitter::ofxTwitter() {
+
+// OFX TWITTER STREAM
+
+ofxTwitterStream::ofxTwitterStream() {
 }
 
-ofxTwitter::~ofxTwitter() {
+ofxTwitterStream::~ofxTwitterStream() {
 	connector.stop();
 	thread.join();
 }
 
-void ofxTwitter::connect(
+void ofxTwitterStream::connect(
 	string sUser
 	,string sPass
 	,string sServer
@@ -18,10 +21,38 @@ void ofxTwitter::connect(
 	thread.start(connector);
 }
 
-bool ofxTwitter::hasNewTweets() {
+bool ofxTwitterStream::hasNewTweets() {
 	return connector.hasNewTweets();
 }
 
-ofxTweet ofxTwitter::getNextTweet() {
+ofxTweet ofxTwitterStream::getNextTweet() {
+	return connector.getNextTweet();
+}
+
+
+// OFX TWITTER SEARCH
+
+ofxTwitterSearch::ofxTwitterSearch() {
+}
+
+ofxTwitterSearch::~ofxTwitterSearch() {
+	connector.stop();
+	thread.join();
+}
+
+void ofxTwitterSearch::connect(
+                                 string  searchTerms,
+                                 int     pollInterval
+                                 )
+{
+	connector.setup(searchTerms, pollInterval);
+	thread.start(connector);
+}
+
+bool ofxTwitterSearch::hasNewTweets() {
+	return connector.hasNewTweets();
+}
+
+ofxTweet ofxTwitterSearch::getNextTweet() {
 	return connector.getNextTweet();
 }

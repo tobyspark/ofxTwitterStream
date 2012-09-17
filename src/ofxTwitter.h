@@ -2,13 +2,14 @@
 #include <string>
 #include <Poco/Thread.h>
 #include "ofxTwitterStreamConnector.h"
+#include "ofxTwitterSearchConnector.h"
 #include "ofxTweet.h"
 using namespace std;
 
-class ofxTwitter {
+class ofxTwitterStream {
 public:
-	ofxTwitter();
-	~ofxTwitter();
+	ofxTwitterStream();
+	~ofxTwitterStream();
 	void connect(
 		 string sUsername
 		,string sPassword
@@ -19,5 +20,20 @@ public:
 	ofxTweet getNextTweet();	
 private:
 	ofxTwitterStreamConnector connector;
+	Poco::Thread thread;
+};
+
+class ofxTwitterSearch {
+public:
+	ofxTwitterSearch();
+	~ofxTwitterSearch();
+	void connect(
+                 string  searchTerms,
+                 int     pollInterval = ofxTwitterSearchConnector_NoPoll
+                 );
+	bool hasNewTweets();
+	ofxTweet getNextTweet();
+private:
+	ofxTwitterSearchConnector connector;
 	Poco::Thread thread;
 };

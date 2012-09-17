@@ -21,12 +21,11 @@ public:
 	virtual void run(){};
     virtual void stop(){};
     
-	void parseBuffer(vector<char> sBuffer);
-	void parseTweetJSON(string sLine);
+	void parseTweetJSON(json_t* tweetJSON);
 	bool hasNewTweets();
 	ofxTweet getNextTweet();
 	
-private:
+protected:
     bool is_connected;
 	deque<ofxTweet> tweets;
 	Poco::RWLock lock;

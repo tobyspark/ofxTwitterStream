@@ -1,14 +1,27 @@
-//
-//  ofxTwitterSearchConnector.h
-//  IMCFestivalApp
-//
-//  Created by TBZ.PhD on 17/09/2012.
-//
-//
+#pragma once
+#include "ofxTwitterConnector.h"
+#include "ofxHttpUtils.h"
 
-#ifndef __IMCFestivalApp__ofxTwitterSearchConnector__
-#define __IMCFestivalApp__ofxTwitterSearchConnector__
+#define ofxTwitterSearchConnector_BaseURL "http://search.twitter.com/search.json"
+#define ofxTwitterSearchConnector_NoPoll -1
 
-#include <iostream>
+using namespace std;
 
-#endif /* defined(__IMCFestivalApp__ofxTwitterSearchConnector__) */
+class ofxTwitterSearchConnector : public ofxTwitterConnector {
+public:
+	ofxTwitterSearchConnector();
+	void setup(
+               string  searchTerms,
+               int     pollInterval = ofxTwitterSearchConnector_NoPoll
+            );
+	
+	void run();
+	void stop();
+private:
+    string          searchTerms;
+    int             pollInterval;
+    ofxHttpUtils    httpUtils;
+    string          maxTweetID;
+    void            startQuery();
+    void            receiveResponse(ofxHttpResponse &response);
+};

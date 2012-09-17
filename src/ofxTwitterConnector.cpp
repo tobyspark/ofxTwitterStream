@@ -5,32 +5,6 @@ ofxTwitterConnector::ofxTwitterConnector()
 {
 }
 
-void ofxTwitterConnector::parseBuffer(vector<char> sBuffer) {
-	int mode = 0;
-	string line(sBuffer.begin(), sBuffer.end());
-	Poco::trimInPlace(line);
-	if(is_connected) {
-		if(line[0] == '{' && line[line.size()-1] == '}') {
-			parseTweetJSON(line);
-		}
-	}
-	else {	
-		string code;
-		Poco::RegularExpression reg("(HTTP/1.1) ([0-9]+)");
-		std::vector<string> vec;
-		reg.split(line, 0,vec);
-		if(vec.size() == 3 && Poco::icompare(vec[1], "http/1.1") == 0) {
-			if(vec[2] == "200") {
-				is_connected = true;
-			}
-			else {
-				cout << "unhandled http result: " << vec[2] << endl;
-			}
-		}
-	
-	}
-}
-
 /*
 {
     "in_reply_to_status_id_str": "73829792671215616",
@@ -109,20 +83,13 @@ void ofxTwitterConnector::parseBuffer(vector<char> sBuffer) {
 }
 */
 
-void ofxTwitterConnector::parseTweetJSON(string sJSON) {
-	json_t* root;
-	json_error_t error;
+
+void ofxTwitterConnector::parseTweetJSON(json_t* tweetJSON) {
+
 	ofxTweet tweet;
-	
-	// load json.
-	root = json_loads(sJSON.c_str(), 0, &error);
-	if(!root) {
-		cout <<  "error: on line:" << error.line << ", " << error.text << endl;
-		return;
-	}
-	
+
 	// text
-	json_t* node =	json_object_get(root, "text");
+	json_t* node =	json_object_get(tweetJSON, "text");
 	if(!json_is_string(node)) {
 		cout << "error: cannot get text from tweet" << endl;
 		return;
@@ -131,7 +98,7 @@ void ofxTwitterConnector::parseTweetJSON(string sJSON) {
 	tweet.setText(text);
 
 	// id_str
-	node = json_object_get(root, "id_str");
+	node = json_object_get(tweetJSON, "id_str");
 	if(!json_is_string(node)) {
 		cout <<  "error: cannot get id_str from tweet" << endl;
 		return;
@@ -139,39 +106,67 @@ void ofxTwitterConnector::parseTweetJSON(string sJSON) {
 	string id = json_string_value(node);
 	tweet.setID(id);
 		
-	// user - object
-	json_t* user = json_object_get(root, "user");
-	if(!json_is_object(user)) {
-		cout << "error: cannot get user node from tweet" << endl;
-		return;
-	}
-	
-	// user: screen name
-	node = json_object_get(user, "screen_name");
-	if(!json_is_string(node)) {
-		cout << "error: cannot get user screen_name" << endl;
-		return;
-	}
-	string screen_name = json_string_value(node);
-	tweet.setScreenName(screen_name);
-	
-	// user: avatar
-	node = json_object_get(user, "profile_image_url");
-	if(!json_is_string(node)) {
-		cout << "error: cannot get profile_image_url" << endl;
-		return;
-	}
-	string profile_image = json_string_value(node);
-	tweet.setAvatar(profile_image);
-	
-	// user: id
-	node = json_object_get(user, "id_str");
-	if(!json_is_string(node)) {
-		cout << "error: cannot get user id" << endl;
-		return;
-	}
-	string user_id = json_string_value(node);
-	tweet.setUserID(user_id);
+	// user - values can be in tweet root or in user object
+	json_t* user = json_object_get(tweetJSON, "user");
+    if(json_is_object(user))
+    {
+        // user: screen name
+        node = json_object_get(user, "screen_name");
+        if(!json_is_string(node)) {
+            cout << "error: cannot get user screen_name" << endl;
+            return;
+        }
+        string screen_name = json_string_value(node);
+        tweet.setScreenName(screen_name);
+        
+        // user: avatar
+        node = json_object_get(user, "profile_image_url");
+        if(!json_is_string(node)) {
+            cout << "error: cannot get profile_image_url" << endl;
+            return;
+        }
+        string profile_image = json_string_value(node);
+        tweet.setAvatar(profile_image);
+        
+        // user: id
+        node = json_object_get(user, "id_str");
+        if(!json_is_string(node)) {
+            cout << "error: cannot get user id" << endl;
+            return;
+        }
+        string user_id = json_string_value(node);
+        tweet.setUserID(user_id);
+    }
+	else
+    {
+        // user: screen name
+        node = json_object_get(tweetJSON, "from_user_name"); // Note this is different from key when wrapped in user object
+        if(!json_is_string(node)) {
+            cout << "error: cannot get user screen_name" << endl;
+            return;
+        }
+        string screen_name = json_string_value(node);
+        tweet.setScreenName(screen_name);
+        
+        // user: avatar
+        node = json_object_get(tweetJSON, "profile_image_url");
+        if(!json_is_string(node)) {
+            cout << "error: cannot get profile_image_url" << endl;
+            return;
+        }
+        string profile_image = json_string_value(node);
+        tweet.setAvatar(profile_image);
+        
+        // user: id
+        node = json_object_get(tweetJSON, "id_str");
+        if(!json_is_string(node)) {
+            cout << "error: cannot get user id" << endl;
+            return;
+        }
+        string user_id = json_string_value(node);
+        tweet.setUserID(user_id);
+    }
+
 
 	// store tweet.
 	lock.writeLock();
