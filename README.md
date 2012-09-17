@@ -22,4 +22,4 @@ That's it!
 
 toby*spark
 ----------
-- tested on iOS & Mac, Xcode 4.4
+- tested on iOS & Mac OSX, Xcode 4.4
