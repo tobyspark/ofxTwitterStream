@@ -88,6 +88,16 @@ void ofxTwitterConnector::parseTweetJSON(json_t* tweetJSON) {
 
 	ofxTweet tweet;
 
+    // TASK: Copy in source JSON to capture all parameters for any specific subsequent use
+    char* sourceJSON = json_dumps(tweetJSON, JSON_COMPACT);
+    if (!sourceJSON) {
+        cout << "error: unable to write tweetJSON" << endl;
+		return;
+    }
+    tweet.setSourceJSON(string(sourceJSON));
+    
+    // TASK: Create common attributes of tweet for easy use
+    
 	// text
 	json_t* node =	json_object_get(tweetJSON, "text");
 	if(!json_is_string(node)) {

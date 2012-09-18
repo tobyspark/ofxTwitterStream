@@ -28,9 +28,10 @@ public:
 	ofxTwitterSearch();
 	~ofxTwitterSearch();
 	void connect(
-                 string  searchTerms,
-                 int     pollInterval = ofxTwitterSearchConnector_NoPoll
-                 );
+                 string           searchTerms
+                 ,list<string>    searchParameters
+                 ,int             pollInterval = ofxTwitterSearchConnector_NoPoll
+    );
 	bool hasNewTweets();
 	ofxTweet getNextTweet();
 private:

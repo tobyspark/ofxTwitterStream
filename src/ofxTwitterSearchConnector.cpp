@@ -6,11 +6,13 @@ ofxTwitterSearchConnector::ofxTwitterSearchConnector()
 }
 
 void ofxTwitterSearchConnector::setup(
-                                      string  _searchTerms,
-                                      int     _pollInterval
-                                      )
+                   string           _searchTerms
+                   ,list<string>    _searchParameters
+                   ,int             _pollInterval
+                   )
 {
     searchTerms = _searchTerms;
+    searchParameters = _searchParameters;
     pollInterval = _pollInterval;
     
     ofAddListener(httpUtils.newResponseEvent, this, &ofxTwitterSearchConnector::receiveResponse);
@@ -31,8 +33,14 @@ void ofxTwitterSearchConnector::stop()
 void ofxTwitterSearchConnector::startQuery()
 {
     string query = ofxTwitterSearchConnector_BaseURL;
-    query += "?q=";
-	query += searchTerms;
+    query += "?q=\"" + searchTerms + "\"";
+    
+    list<string>::iterator parameter;
+    for (parameter = searchParameters.begin(); parameter != searchParameters.end(); ++parameter)
+    {
+        query += "&" + *parameter;
+    }
+    
     if (maxTweetID.compare("0")) query += "&since_id=" + maxTweetID;
     query += "&result_type=recent";
     

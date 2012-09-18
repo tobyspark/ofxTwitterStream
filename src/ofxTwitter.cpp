@@ -41,11 +41,12 @@ ofxTwitterSearch::~ofxTwitterSearch() {
 }
 
 void ofxTwitterSearch::connect(
-                                 string  searchTerms,
-                                 int     pollInterval
-                                 )
+                               string           searchTerms
+                               ,list<string>    searchParameters
+                               ,int             pollInterval
+                              )
 {
-	connector.setup(searchTerms, pollInterval);
+	connector.setup(searchTerms, searchParameters, pollInterval);
 	thread.start(connector);
 }
 
