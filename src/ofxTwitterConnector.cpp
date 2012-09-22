@@ -168,7 +168,7 @@ void ofxTwitterConnector::parseTweetJSON(json_t* tweetJSON) {
         tweet.setAvatar(profile_image);
         
         // user: id
-        node = json_object_get(tweetJSON, "id_str");
+        node = json_object_get(tweetJSON, "from_user_id_str"); // Note this is different from key when wrapped in user object
         if(!json_is_string(node)) {
             cout << "error: cannot get user id" << endl;
             return;
