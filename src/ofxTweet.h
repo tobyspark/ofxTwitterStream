@@ -20,7 +20,7 @@ public:
 	inline ofxTweet& setUserID(string sID)			{ user_id = sID;			return *this;}
     inline ofxTweet& setSourceJSON(string sJSON)    { sourceJSON = sJSON;       return *this;}
 	
-private:
+protected:
 	string text;
 	string id;
 	string screen_name;
