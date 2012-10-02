@@ -33,17 +33,23 @@ void ofxTwitterSearchConnector::stop()
 void ofxTwitterSearchConnector::startQuery()
 {
     string query = ofxTwitterSearchConnector_BaseURL;
-    query += "?q=\"" + searchTerms + "\"";
+    string encodedSearchTerms;
+    Poco::URI::encode(searchTerms, "#", encodedSearchTerms);
+    
+    query += "?q=" + encodedSearchTerms;
     
     list<string>::iterator parameter;
     for (parameter = searchParameters.begin(); parameter != searchParameters.end(); ++parameter)
     {
-        query += "&" + *parameter;
+        string encodedParameter;
+        Poco::URI::encode(*parameter, "#", encodedParameter);
+        
+        query += "&" + encodedParameter;
     }
     
     if (maxTweetID.compare("0")) query += "&since_id=" + maxTweetID;
     query += "&result_type=recent";
-    
+
     httpUtils.addUrl(query);
 }
 
